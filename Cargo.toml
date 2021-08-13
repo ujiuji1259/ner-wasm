@@ -13,7 +13,6 @@ js-sys = "0.3.52"
 wasm-bindgen = "0.2.74"
 console_error_panic_hook = "0.1.6"
 crfs = "0.1.3"
-serde = "1.0.127"
 
 [dependencies.sudachi]
 path = "/Users/ujiie/sudachi.rs"
