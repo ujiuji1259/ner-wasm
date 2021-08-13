@@ -18,3 +18,7 @@ Cargo.lock
 #Cargo.lock
 
 .vscode/
+
+pkg/
+target/
+data_im.crfsuite

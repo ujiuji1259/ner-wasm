@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    </head>
+    <body>
+        <div id="app">
+            <div class="row mt-3">
+                <div class="col-4 offset-4">
+                    <input type="text" class="form-control" v-model="sent">
+                </div>
+                <div class="col-1">
+                    <button class="btn btn-primary mb-3" v-on:click="analyze()">search</button>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th v-for="token in tokens">{{token}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td v-for="label in labels">{{label}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+
+    <script type="module">
+        import init, {NER} from './pkg/ner_wasm.js';
+        let model = ner_init();
+        async function ner_init() {
+            let wasm = await init();
+            model = NER.new();
+            return model;
+        }
+        // async function run() {
+        //     let wasm = await init();
+        //     let tokenizer = MyTokenizer.new();
+        // }
+        // run();
+        // console.log(ner("急性骨髄性白血病により緊急入院"));
+        var app = new Vue({
+            el: '#app',
+            data: {
+                sent: '',
+                tokens: [],
+                labels: []
+            },
+            methods: {
+                analyze: function() {
+                    let tokens = model.tag(this.sent);
+                    this.tokens = tokens[0];
+                    this.labels = tokens[1];
+                }
+            }
+        })
+    </script>
+</html>
