@@ -10,7 +10,7 @@ impl MyTokenizer {
     pub fn new() -> Self {
         console_error_panic_hook::set_once();
 
-        let bytes = include_bytes!("/Users/ujiie/sudachi.rs/src/resources/system.dic");
+        let bytes = include_bytes!("/path/to/sudachi.rs/src/resources/system.dic");
         Self {
             tokenizer: Tokenizer::new(bytes)
         }
