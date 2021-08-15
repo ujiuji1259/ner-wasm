@@ -1,8 +1,6 @@
-mod tokenizer;
-
 extern crate console_error_panic_hook;
 
-use tokenizer::MyTokenizer;
+use sudachi::tokenizer::{Tokenizer, Mode};
 use js_sys::{Array, JsString, global, Object};
 use wasm_bindgen::prelude::*;
 use std::path::Path;
@@ -41,23 +39,40 @@ fn extract_features(sent: &Vec<String>) -> Vec<Vec<Attribute>> {
 #[wasm_bindgen]
 pub struct NER {
     tagger: Model<'static>,
-    tokenizer: MyTokenizer,
+    tokenizer: Tokenizer<'static>,
+}
+
+impl NER {
+    pub fn tokenize(&self, s: &str) -> Vec<String> {
+        let morpheme_list = self.tokenizer.tokenize(&s.to_string(), &Mode::B, false);
+
+        // let tokens: Array = morpheme_list
+        let tokens: Vec<String> = morpheme_list
+            .iter()
+            // .map(|m| JsString::from(m.surface().clone()))
+            .map(|m| String::from(m.surface()))
+            .collect();
+        return tokens;
+    }
 }
 
 
 #[wasm_bindgen]
 impl NER {
     pub fn new() -> Self {
+        // data for crf
         let buf = include_bytes!("/path/to/ner-wasm/data_im.crfsuite");
-        let tokenizer = MyTokenizer::new();
+
+        // data for tokenizer
+        let bytes = include_bytes!("/path/to/sudachi.rs/src/resources/system.dic");
         Self {
             tagger: Model::new(buf).unwrap(),
-            tokenizer: tokenizer,
+            tokenizer: Tokenizer::new(bytes),
         }
     }
 
     pub fn tag(&mut self, sent: &str) -> Array {
-        let xseq = self.tokenizer.tokenize(sent);
+        let xseq = self.tokenize(sent);
 
         let mut tagger = self.tagger.tagger().unwrap();
         let attributes = extract_features(&xseq);
