@@ -48,7 +48,7 @@ pub struct NER {
 #[wasm_bindgen]
 impl NER {
     pub fn new() -> Self {
-        let buf = include_bytes!("/Users/ujiie/ner-wasm/data_im.crfsuite");
+        let buf = include_bytes!("/path/to/ner-wasm/data_im.crfsuite");
         let tokenizer = MyTokenizer::new();
         Self {
             tagger: Model::new(buf).unwrap(),
